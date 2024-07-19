@@ -1,0 +1,16 @@
+@REngine2_HostAddress = http://localhost:5158
+
+### Get all hotels
+GET {{REngine2_HostAddress}}/api/Hotel
+
+
+### Find availability for a hotel
+GET {{REngine2_HostAddress}}/api/Engine
+    ?checkinDate=2024-07-15
+    &checkoutDate=2024-07-23
+    &desiredHotelId=2
+
+Accept: application/json
+
+### Get all reservations
+GET {{REngine2_HostAddress}}/api/Reservation

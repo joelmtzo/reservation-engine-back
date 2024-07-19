@@ -1,0 +1,25 @@
+            from h in context.Hotels
+            join hr in context.HotelRooms on h.Id equals hr.HotelId
+            join rm in context.Rooms on hr.RoomId equals rm.Id
+            join r in context.Reservations on hr.Id equals r.HotelRoomId into reservations
+            
+            from r in reservations
+                 .Where(res => (res.CheckinDate <= checkinDate && res.CheckoutDate > checkinDate) ||
+                               (res.CheckinDate < checkoutDate && res.CheckoutDate >= checkoutDate) ||
+                               (res.CheckinDate >= checkinDate && res.CheckoutDate <= checkoutDate))
+                 .DefaultIfEmpty()
+            
+            where r == null && h.Id == desiredHotelId
+            
+            group new { h.City, rm.RoomType, rm.Capacity, rm.PricePerNight } by h.Name into hotelGroup
+            select new
+            {
+                HotelName = hotelGroup.Key,
+                City = hotelGroup.Select(hotel => hotel.City).First(),
+                Rooms = hotelGroup.Select(room => new
+                {
+                    RoomType = room.RoomType,
+                    Capacity = room.Capacity,
+                    PricePerNight = room.PricePerNight
+                }).Distinct()
+            };
